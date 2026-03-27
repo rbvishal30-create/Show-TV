@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<meta name="theme-color" content="#0a0608"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="Show TV"/>
+<title>Show TV — Romance · Drama · Web Series</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{
+  --bg:#0a0608;
+  --bg2:#100c0e;
+  --card:#161014;
+  --card2:#1e1620;
+  --border:#2a1f28;
+  --text:#f5eef8;
+  --muted:#7a6882;
+  --rose:#e8436a;
+  --rose2:#ff6b8a;
+  --gold:#f0c060;
+  --purple:#c084fc;
+  --teal:#2dd4bf;
+  --green:#4ade80;
+  --grad-rose:linear-gradient(135deg,#e8436a,#ff9a9e);
+  --grad-drama:linear-gradient(135deg,#667eea,#764ba2);
+  --grad-gold:linear-gradient(135deg,#f0c060,#e8436a);
+}
+html,body{height:100%;overflow:hidden;}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  display:flex;flex-direction:column;
+  max-width:430px;margin:0 auto;
+  box-shadow:0 0 100px rgba(232,67,106,0.12);
+}
+
+/* SPLASH */
+#splash{
+  position:fixed;inset:0;z-index:9999;
+  background:radial-gradient(ellipse at center,#1a0810 0%,#0a0608 70%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transition:opacity 0.8s ease;
+}
+.splash-logo-wrap{
+  position:relative;margin-bottom:28px;
+}
+.splash-tv{font-size:4rem;display:block;text-align:center;animation:tvPulse 1.5s ease infinite;}
+@keyframes tvPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+.splash-glow{
+  position:absolute;inset:-20px;
+  background:radial-gradient(circle,rgba(232,67,106,0.3),transparent 70%);
+  border-radius:50%;animation:glowPulse 1.5s ease infinite;
+}
+@keyframes glowPulse{0%,100%{opacity:0.5;}50%{opacity:1;}}
+.splash-title{
+  font-family:'Playfair Display',serif;
+  font-size:2.8rem;font-weight:900;
+  color:var(--text);letter-spacing:0.05em;
+  text-align:center;
+}
+.splash-title span{
+  background:var(--grad-rose);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.splash-sub{
+  font-size:0.65rem;letter-spacing:0.35em;
+  text-transform:uppercase;color:var(--muted);
+  margin-top:8px;text-align:center;
+}
+.splash-bar{
+  width:160px;height:2px;
+  background:var(--border);
+  border-radius:2px;overflow:hidden;
+  margin-top:40px;
+}
+.splash-bar-fill{
+  height:100%;width:0%;
+  background:var(--grad-rose);
+  border-radius:2px;
+  animation:barFill 2s ease forwards;
+}
+@keyframes barFill{to{width:100%;}}
+
+/* HEADER */
+header{
+  flex-shrink:0;
+  background:linear-gradient(to bottom,var(--bg2),transparent);
+  padding:14px 16px 10px;
+  display:flex;justify-content:space-between;align-items:center;
+  position:sticky;top:0;z-index:50;
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(42,31,40,0.5);
+}
+.logo{
+  font-family:'Playfair Display',serif;
+  font-size:1.4rem;font-weight:900;
+  color:var(--text);letter-spacing:0.03em;
+}
+.logo span{
+  background:var(--grad-rose);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.header-right{display:flex;align-items:center;gap:10px;}
+.header-search-btn{
+  background:var(--card2);border:1px solid var(--border);
+  border-radius:50%;width:34px;height:34px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:0.85rem;
+  transition:all 0.2s;
+}
+.header-search-btn:active{transform:scale(0.9);}
+.premium-chip{
+  background:linear-gradient(135deg,rgba(240,192,96,0.15),rgba(232,67,106,0.15));
+  border:1px solid rgba(240,192,96,0.3);
+  border-radius:20px;padding:5px 12px;
+  font-size:0.6rem;font-weight:600;
+  color:var(--gold);letter-spacing:0.05em;
+  cursor:pointer;
+}
+
+/* MAIN */
+main{flex:1;overflow-y:auto;overflow-x:hidden;padding-bottom:72px;}
+main::-webkit-scrollbar{width:2px;}
+main::-webkit-scrollbar-thumb{background:var(--border);}
+
+/* PAGES */
+.page{display:none;}
+.page.active{display:block;animation:fadeUp 0.35s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+/* HERO CAROUSEL */
+.hero{position:relative;height:260px;overflow:hidden;}
+.hero-slide{
+  position:absolute;inset:0;
+  opacity:0;transition:opacity 0.8s ease;
+}
+.hero-slide.active{opacity:1;}
+.hero-bg{position:absolute;inset:0;}
+.hero-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,var(--bg) 0%,rgba(10,6,8,0.4) 60%,transparent 100%);
+}
+.hero-content{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:20px 16px;
+}
+.hero-genre-badges{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;}
+.genre-badge{
+  font-size:0.55rem;font-weight:600;letter-spacing:0.1em;
+  text-transform:uppercase;padding:3px 8px;border-radius:4px;
+}
+.gb-romance{background:rgba(232,67,106,0.25);color:var(--rose2);}
+.gb-drama{background:rgba(192,132,252,0.2);color:var(--purple);}
+.gb-series{background:rgba(45,212,191,0.2);color:var(--teal);}
+.gb-new{background:rgba(240,192,96,0.2);color:var(--gold);}
+.hero-title{
+  font-family:'Playfair Display',serif;
+  font-size:1.6rem;font-weight:900;
+  line-height:1.1;color:var(--text);
+  margin-bottom:6px;
+}
+.hero-meta-row{
+  display:flex;align-items:center;gap:8px;
+  font-size:0.65rem;color:var(--muted);
+  margin-bottom:14px;
+}
+.hero-rating{color:var(--gold);font-weight:600;}
+.hero-dot{width:3px;height:3px;background:var(--muted);border-radius:50%;}
+.hero-btns{display:flex;gap:10px;}
+.btn-play{
+  display:flex;align-items:center;gap:8px;
+  background:var(--rose);
+  border:none;border-radius:10px;
+  padding:10px 20px;
+  color:white;font-family:'DM Sans',sans-serif;
+  font-size:0.8rem;font-weight:600;cursor:pointer;
+  transition:all 0.2s;
+}
+.btn-play:active{transform:scale(0.95);}
+.btn-list{
+  background:rgba(255,255,255,0.1);
+  border:1px solid rgba(255,255,255,0.15);
+  border-radius:10px;padding:10px 16px;
+  color:white;font-family:'DM Sans',sans-serif;
+  font-size:0.8rem;font-weight:500;cursor:pointer;
+  backdrop-filter:blur(10px);
+  transition:all 0.2s;
+}
+.btn-list:active{transform:scale(0.95);}
+.hero-dots{
+  position:absolute;bottom:8px;right:16px;
+  display:flex;gap:5px;
+}
+.hero-dot-btn{
+  width:6px;height:6px;border-radius:3px;
+  background:rgba(255,255,255,0.3);
+  border:none;cursor:pointer;
+  transition:all 0.3s;
+}
+.hero-dot-btn.active{width:18px;background:var(--rose);}
+
+/* GENRE TABS */
+.genre-tabs{
+  display:flex;gap:6px;
+  padding:14px 16px 10px;
+  overflow-x:auto;scrollbar-width:none;
+  position:sticky;top:57px;z-index:40;
+  background:rgba(10,6,8,0.95);
+  backdrop-filter:blur(20px);
+}
+.genre-tabs::-webkit-scrollbar{display:none;}
+.gtab{
+  flex-shrink:0;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:20px;padding:6px 14px;
+  font-family:'DM Sans',sans-serif;
+  font-size:0.68rem;font-weight:500;
+  color:var(--muted);cursor:pointer;
+  transition:all 0.2s;white-space:nowrap;
+}
+.gtab.active{
+  background:var(--rose);border-color:var(--rose);
+  color:white;font-weight:600;
+}
+
+/* SECTION */
+.sec{padding:18px 0 4px;}
+.sec-head{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:0 16px;margin-bottom:12px;
+}
+.sec-title{
+  font-family:'Playfair Display',serif;
+  font-size:1rem;font-weight:700;color:var(--text);
+}
+.sec-all{font-size:0.65rem;color:var(--rose);cursor:pointer;font-weight:500;}
+
+/* HORIZONTAL SCROLL */
+.hscroll{
+  display:flex;gap:10px;
+  padding:0 16px 8px;
+  overflow-x:auto;scrollbar-width:none;
+}
+.hscroll::-webkit-scrollbar{display:none;}
+
+/* SHOW CARDS */
+.show-card{
+  flex-shrink:0;border-radius:14px;
+  overflow:hidden;cursor:pointer;
+  position:relative;
+  transition:transform 0.25s;
+}
+.show-card:active{transform:scale(0.94);}
+.sc-portrait{width:130px;}
+.sc-portrait .sc-thumb{height:190px;}
+.sc-landscape{width:210px;}
+.sc-landscape .sc-thumb{height:118px;}
+.sc-thumb{
+  position:relative;overflow:hidden;
+  border-radius:14px;
+}
+.sc-bg{
+  width:100%;height:100%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:3rem;
+  transition:transform 0.4s;
+}
+.show-card:hover .sc-bg{transform:scale(1.06);}
+.sc-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(10,6,8,0.95) 0%,rgba(10,6,8,0.1) 60%,transparent 100%);
+  border-radius:14px;
+}
+.sc-top-badge{
+  position:absolute;top:8px;left:8px;
+  font-size:0.52rem;font-weight:700;
+  padding:2px 7px;border-radius:4px;
+  letter-spacing:0.05em;
+}
+.sc-free{background:rgba(74,222,128,0.2);color:var(--green);}
+.sc-pro{background:rgba(240,192,96,0.2);color:var(--gold);}
+.sc-new{background:rgba(232,67,106,0.3);color:var(--rose2);}
+.sc-rating{
+  position:absolute;top:8px;right:8px;
+  font-size:0.55rem;font-weight:600;
+  background:rgba(0,0,0,0.6);
+  padding:2px 6px;border-radius:4px;
+  color:var(--gold);
+}
+.sc-info{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:8px 10px;
+}
+.sc-name{
+  font-family:'DM Sans',sans-serif;
+  font-size:0.75rem;font-weight:600;
+  color:var(--text);line-height:1.2;
+}
+.sc-sub{font-size:0.58rem;color:var(--muted);margin-top:2px;}
+
+/* CONTINUE WATCHING */
+.cw-card{
+  flex-shrink:0;width:230px;
+  cursor:pointer;transition:transform 0.2s;
+}
+.cw-card:active{transform:scale(0.96);}
+.cw-thumb{
+  height:130px;border-radius:12px;
+  position:relative;overflow:hidden;
+}
+.cw-bg{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;}
+.cw-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.35);border-radius:12px;}
+.cw-play{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:40px;height:40px;
+  background:rgba(232,67,106,0.85);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:0.9rem;color:white;
+}
+.cw-progress{
+  height:3px;background:var(--border);
+  border-radius:2px;margin-top:8px;overflow:hidden;
+}
+.cw-bar{height:100%;background:var(--rose);border-radius:2px;}
+.cw-info{margin-top:6px;}
+.cw-name{font-size:0.78rem;font-weight:600;color:var(--text);}
+.cw-ep{font-size:0.62rem;color:var(--muted);margin-top:2px;}
+
+/* AD BANNER */
+.ad-card{
+  margin:4px 16px 8px;
+  background:linear-gradient(135deg,#160810,#200d18);
+  border:1px solid rgba(232,67,106,0.2);
+  border-radius:14px;
+  padding:12px 14px;
+  display:flex;align-items:center;gap:12px;
+  cursor:pointer;position:relative;overflow:hidden;
+}
+.ad-card::after{
+  content:'';position:absolute;top:0;left:-100%;
+  width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(232,67,106,0.04),transparent);
+  animation:shimmer 3s infinite;
+}
+@keyframes shimmer{to{left:120%;}}
+.ad-icon-wrap{
+  width:44px;height:44px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;flex-shrink:0;
+}
+.ad-content-wrap{flex:1;}
+.ad-sponsored{font-size:0.48rem;color:var(--muted);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:2px;}
+.ad-title-txt{font-size:0.8rem;font-weight:600;color:var(--text);}
+.ad-sub-txt{font-size:0.63rem;color:var(--muted);margin-top:1px;}
+.ad-cta-btn{
+  background:var(--grad-rose);border:none;border-radius:8px;
+  padding:7px 14px;color:white;
+  font-family:'DM Sans',sans-serif;font-size:0.65rem;font-weight:600;
+  cursor:pointer;flex-shrink:0;
+}
+
+/* PREMIUM WALL */
+.premium-wall{
+  margin:8px 16px;
+  background:linear-gradient(135deg,#160c10,#1e1020,#160c10);
+  border:1px solid rgba(240,192,96,0.25);
+  border-radius:18px;padding:22px 18px;
+  position:relative;overflow:hidden;
+}
+.pw-glow{
+  position:absolute;top:-40px;right:-40px;
+  width:150px;height:150px;
+  background:radial-gradient(circle,rgba(240,192,96,0.12),transparent 70%);
+  border-radius:50%;
+}
+.pw-label{font-size:0.55rem;color:var(--gold);letter-spacing:0.25em;text-transform:uppercase;margin-bottom:6px;}
+.pw-title{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;margin-bottom:14px;}
+.pw-features{display:flex;flex-direction:column;gap:8px;margin-bottom:18px;}
+.pw-feat{display:flex;align-items:center;gap:10px;font-size:0.72rem;color:var(--muted);}
+.pw-feat-icon{font-size:0.9rem;}
+.pw-plans{display:flex;gap:8px;margin-bottom:16px;}
+.pw-plan{
+  flex:1;background:rgba(0,0,0,0.3);
+  border:1px solid var(--border);
+  border-radius:12px;padding:10px 8px;
+  text-align:center;cursor:pointer;
+  transition:all 0.2s;
+}
+.pw-plan.selected{border-color:var(--gold);background:rgba(240,192,96,0.06);}
+.pw-plan:active{transform:scale(0.96);}
+.pw-plan-name{font-size:0.58rem;color:var(--muted);margin-bottom:4px;}
+.pw-plan-price{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--text);}
+.pw-plan-save{font-size:0.5rem;color:var(--green);margin-top:2px;}
+.pw-btn{
+  width:100%;padding:14px;
+  background:var(--grad-gold);
+  border:none;border-radius:12px;
+  color:#000;font-family:'DM Sans',sans-serif;
+  font-size:0.9rem;font-weight:700;cursor:pointer;
+  transition:transform 0.2s;letter-spacing:0.02em;
+}
+.pw-btn:active{transform:scale(0.97);}
+
+/* PLAYER MODAL */
+.player-modal{
+  display:none;position:fixed;inset:0;
+  background:var(--bg);z-index:800;
+  flex-direction:column;
+}
+.player-modal.show{display:flex;animation:slideUp 0.35s cubic-bezier(0.32,0.72,0,1);}
+@keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+.pm-header{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 16px;
+  background:var(--bg2);
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.pm-back{
+  background:var(--card2);border:none;
+  width:36px;height:36px;border-radius:50%;
+  color:var(--text);font-size:1rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.pm-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;flex:1;color:var(--text);}
+
+.pm-body{flex:1;overflow-y:auto;}
+.pm-screen{
+  position:relative;height:220px;
+  background:#000;overflow:hidden;
+}
+.pm-screen-bg{position:absolute;inset:0;}
+.pm-emoji{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  font-size:4rem;opacity:0.3;
+}
+.pm-play-overlay{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,0.3);
+}
+.pm-play-circle{
+  width:64px;height:64px;
+  background:rgba(232,67,106,0.9);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;cursor:pointer;
+  backdrop-filter:blur(10px);
+  border:2px solid rgba(255,255,255,0.2);
+  transition:transform 0.2s;
+}
+.pm-play-circle:active{transform:scale(0.9);}
+
+/* YouTube embed frame */
+.yt-frame{
+  display:none;
+  width:100%;height:220px;border:none;
+}
+
+/* Pre-roll */
+.preroll-overlay{
+  position:absolute;inset:0;z-index:10;
+  background:linear-gradient(135deg,#100608,#1a0c12);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:20px;
+}
+.pr-ad-label{font-size:0.55rem;color:var(--rose);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:12px;}
+.pr-icon{font-size:2.5rem;margin-bottom:8px;}
+.pr-title{font-size:0.9rem;font-weight:600;margin-bottom:4px;text-align:center;}
+.pr-sub{font-size:0.68rem;color:var(--muted);text-align:center;margin-bottom:16px;}
+.pr-timer{
+  font-size:0.68rem;color:var(--muted);
+  background:rgba(0,0,0,0.4);
+  padding:5px 12px;border-radius:20px;margin-bottom:10px;
+}
+.pr-skip{
+  background:rgba(255,255,255,0.08);
+  border:1px solid var(--border);
+  border-radius:8px;padding:8px 18px;
+  color:var(--text);font-family:'DM Sans',sans-serif;
+  font-size:0.7rem;cursor:pointer;display:none;
+}
+
+.pm-info{padding:16px;}
+.pm-show-title{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;margin-bottom:8px;}
+.pm-badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.pm-badge{
+  font-size:0.58rem;padding:3px 8px;border-radius:4px;
+  background:var(--card2);border:1px solid var(--border);
+  color:var(--muted);
+}
+.pm-desc{font-size:0.75rem;color:var(--muted);line-height:1.7;margin-bottom:16px;}
+.pm-actions{display:flex;gap:8px;margin-bottom:16px;}
+.pm-action{
+  flex:1;background:var(--card);border:1px solid var(--border);
+  border-radius:10px;padding:10px 6px;
+  text-align:center;cursor:pointer;
+  transition:all 0.2s;
+}
+.pm-action:active{transform:scale(0.95);}
+.pm-action-icon{font-size:1.1rem;}
+.pm-action-label{font-size:0.55rem;color:var(--muted);margin-top:3px;}
+
+/* Episodes list */
+.episodes-section{padding:0 16px 16px;}
+.ep-title{font-size:0.75rem;font-weight:600;color:var(--muted);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:10px;}
+.ep-item{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 0;border-bottom:1px solid var(--border);
+  cursor:pointer;transition:all 0.2s;
+}
+.ep-item:active{opacity:0.7;}
+.ep-num{
+  width:32px;height:32px;border-radius:8px;
+  background:var(--card2);display:flex;align-items:center;justify-content:center;
+  font-size:0.7rem;font-weight:700;color:var(--rose);flex-shrink:0;
+}
+.ep-info{flex:1;}
+.ep-name{font-size:0.78rem;font-weight:500;color:var(--text);}
+.ep-dur{font-size:0.6rem;color:var(--muted);margin-top:2px;}
+.ep-play{font-size:0.8rem;color:var(--muted);}
+
+/* Affiliate */
+.aff-card{
+  margin:0 16px 16px;
+  background:linear-gradient(135deg,#080e16,#0d1520);
+  border:1px solid rgba(45,212,191,0.15);
+  border-radius:12px;padding:12px 14px;
+  display:flex;align-items:center;gap:10px;cursor:pointer;
+}
+.aff-icon{font-size:1.3rem;}
+.aff-info{flex:1;}
+.aff-label{font-size:0.48rem;color:var(--teal);letter-spacing:0.15em;text-transform:uppercase;}
+.aff-name{font-size:0.78rem;font-weight:600;}
+.aff-btn-small{
+  background:var(--teal);border:none;border-radius:8px;
+  padding:6px 12px;color:#000;
+  font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:700;cursor:pointer;
+}
+
+/* SEARCH PAGE */
+.search-page{padding:0;}
+.search-input-wrap{
+  padding:14px 16px;
+  position:sticky;top:57px;z-index:40;
+  background:rgba(10,6,8,0.97);
+  backdrop-filter:blur(20px);
+}
+.search-input-box{
+  display:flex;align-items:center;gap:10px;
+  background:var(--card2);border:1px solid var(--border);
+  border-radius:14px;padding:12px 14px;
+}
+.si-icon{font-size:0.9rem;color:var(--muted);}
+.si-input{
+  flex:1;background:none;border:none;
+  color:var(--text);font-family:'DM Sans',sans-serif;
+  font-size:0.88rem;outline:none;
+}
+.si-input::placeholder{color:var(--muted);}
+.search-genres{padding:0 16px;}
+.sg-title{font-size:0.65rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;}
+.sg-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.sg-card{
+  border-radius:14px;padding:18px 14px;
+  cursor:pointer;position:relative;overflow:hidden;
+  transition:transform 0.2s;
+}
+.sg-card:active{transform:scale(0.96);}
+.sg-name{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;}
+.sg-count{font-size:0.62rem;opacity:0.6;margin-top:3px;}
+.sg-emoji{position:absolute;right:-4px;bottom:-4px;font-size:2.8rem;opacity:0.25;transform:rotate(-8deg);}
+
+/* MY LIST */
+.mylist-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:10px;padding:16px;
+}
+.mylist-empty{
+  text-align:center;padding:60px 24px;
+  color:var(--muted);
+}
+.mle-emoji{font-size:3rem;display:block;margin-bottom:14px;}
+.mle-text{font-size:0.85rem;line-height:1.6;}
+
+/* PROFILE PAGE */
+.profile-header{
+  background:linear-gradient(135deg,#160810,#1e1020);
+  padding:24px 16px;margin-bottom:14px;
+  text-align:center;position:relative;overflow:hidden;
+}
+.ph-glow{
+  position:absolute;top:-30px;left:50%;transform:translateX(-50%);
+  width:200px;height:200px;
+  background:radial-gradient(circle,rgba(232,67,106,0.15),transparent 70%);
+}
+.ph-avatar{
+  width:72px;height:72px;border-radius:50%;
+  background:var(--grad-rose);
+  display:flex;align-items:center;justify-content:center;
+  font-size:2rem;margin:0 auto 12px;
+  border:3px solid rgba(232,67,106,0.3);
+  position:relative;z-index:1;
+}
+.ph-name{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;}
+.ph-plan{
+  display:inline-block;
+  background:rgba(232,67,106,0.15);
+  border:1px solid rgba(232,67,106,0.3);
+  border-radius:20px;padding:4px 14px;
+  font-size:0.65rem;color:var(--rose2);
+  margin-top:6px;
+}
+.ph-stats{
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  gap:8px;margin-top:16px;position:relative;z-index:1;
+}
+.ph-stat{
+  background:rgba(0,0,0,0.3);border-radius:10px;
+  padding:10px 6px;text-align:center;
+}
+.phs-val{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;}
+.phs-label{font-size:0.52rem;color:var(--muted);margin-top:2px;}
+
+.menu-list{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;overflow:hidden;
+  margin:0 16px 14px;
+}
+.menu-item{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 16px;border-bottom:1px solid var(--border);
+  cursor:pointer;transition:background 0.2s;
+}
+.menu-item:last-child{border-bottom:none;}
+.menu-item:active{background:var(--card2);}
+.mi-icon{font-size:1.1rem;width:24px;text-align:center;}
+.mi-label{font-size:0.85rem;font-weight:500;flex:1;}
+.mi-arrow{color:var(--muted);font-size:0.8rem;}
+
+/* BOTTOM NAV */
+.bottom-nav{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:430px;
+  background:rgba(10,6,8,0.97);
+  border-top:1px solid var(--border);
+  display:flex;backdrop-filter:blur(24px);
+  z-index:100;padding-bottom:env(safe-area-inset-bottom);
+}
+.nb{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  gap:3px;padding:10px 6px;
+  background:none;border:none;cursor:pointer;transition:all 0.2s;
+}
+.nb-icon{font-size:1.2rem;transition:transform 0.2s;}
+.nb-label{font-size:0.52rem;color:var(--muted);font-family:'DM Sans',sans-serif;}
+.nb.active .nb-icon{transform:scale(1.15);}
+.nb.active .nb-label{color:var(--rose);}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:84px;left:50%;
+  transform:translateX(-50%) translateY(20px);
+  background:var(--card2);border:1px solid var(--border);
+  border-radius:30px;padding:10px 20px;
+  font-size:0.78rem;font-weight:500;
+  color:var(--text);z-index:9000;
+  transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  opacity:0;white-space:nowrap;
+  box-shadow:0 8px 32px rgba(0,0,0,0.5);
+}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+
+/* BG COLORS */
+.bg-rose{background:linear-gradient(135deg,#2d0818,#5a0f30,#1a0510);}
+.bg-drama{background:linear-gradient(135deg,#0d1020,#1a2050,#080d18);}
+.bg-gold{background:linear-gradient(135deg,#1a1000,#3d2800,#0d0800);}
+.bg-teal{background:linear-gradient(135deg,#001a18,#003330,#000d0c);}
+.bg-purple{background:linear-gradient(135deg,#150820,#2d1050,#0a0410);}
+.bg-dark{background:linear-gradient(135deg,#0d0d0d,#1a1a1a,#050505);}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-logo-wrap">
+    <div class="splash-glow"></div>
+    <span class="splash-tv">📺</span>
+  </div>
+  <div class="splash-title">Show <span>TV</span></div>
+  <div class="splash-sub">Romance · Drama · Web Series</div>
+  <div class="splash-bar"><div class="splash-bar-fill"></div></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">Show <span>TV</span></div>
+  <div class="header-right">
+    <div class="header-search-btn" onclick="showPage('search',document.querySelectorAll('.nb')[1])">🔍</div>
+    <div class="premium-chip" onclick="openPremium()">👑 Premium</div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main>
+
+  <!-- HOME PAGE -->
+  <div class="page active" id="page-home">
+
+    <!-- Hero Carousel -->
+    <div class="hero" id="heroCarousel">
+
+      <div class="hero-slide active">
+        <div class="hero-bg bg-rose"></div>
+        <div style="position:absolute;top:30%;left:50%;transform:translate(-50%,-50%);font-size:6rem;opacity:0.12;">💕</div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+          <div class="hero-genre-badges">
+            <span class="genre-badge gb-romance">Romance</span>
+            <span class="genre-badge gb-new">New</span>
+          </div>
+          <div class="hero-title">Ye Rishta<br>Kya Kehlata Hai</div>
+          <div class="hero-meta-row">
+            <span class="hero-rating">⭐ 8.4</span>
+            <span class="hero-dot"></span>
+            <span>Hindi</span>
+            <span class="hero-dot"></span>
+            <span>2024</span>
+            <span class="hero-dot"></span>
+            <span>Romance</span>
+          </div>
+          <div class="hero-btns">
+            <button class="btn-play" onclick="openPlayer('Ye Rishta Kya Kehlata Hai','Romance · Hindi · Ongoing','Ek pyaar ki anbhool dastan jo dil ko chhu jaati hai.',['💕'],'bg-rose','dQw4w9WgXcQ')">▶ Dekho</button>
+            <button class="btn-list" onclick="addToMyList('Ye Rishta Kya Kehlata Hai','bg-rose','💕')">+ List</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-slide">
+        <div class="hero-bg bg-drama"></div>
+        <div style="position:absolute;top:30%;left:50%;transform:translate(-50%,-50%);font-size:6rem;opacity:0.12;">🎭</div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+          <div class="hero-genre-badges">
+            <span class="genre-badge gb-drama">Drama</span>
+            <span class="genre-badge gb-series">Web Series</span>
+          </div>
+          <div class="hero-title">Scam 1992:<br>The Harshad Story</div>
+          <div class="hero-meta-row">
+            <span class="hero-rating">⭐ 9.3</span>
+            <span class="hero-dot"></span>
+            <span>Hindi</span>
+            <span class="hero-dot"></span>
+            <span>Drama</span>
+          </div>
+          <div class="hero-btns">
+            <button class="btn-play" onclick="openPlayer('Scam 1992','Drama · Web Series · Hindi','India ke sabse bade stock market scam ki sachchi kahani.',['📈'],'bg-drama','dQw4w9WgXcQ')">▶ Dekho</button>
+            <button class="btn-list" onclick="addToMyList('Scam 1992','bg-drama','📈')">+ List</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-slide">
+        <div class="hero-bg bg-purple"></div>
+        <div style="position:absolute;top:30%;left:50%;transform:translate(-50%,-50%);font-size:6rem;opacity:0.12;">👑</div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+          <div class="hero-genre-badges">
+            <span class="genre-badge gb-drama">Drama</span>
+            <span class="genre-badge gb-romance">Romance</span>
+          </div>
+          <div class="hero-title">Pehli Mohabbat</div>
+          <div class="hero-meta-row">
+            <span class="hero-rating">⭐ 8.7</span>
+            <span class="hero-dot"></span>
+            <span>Hindi</span>
+            <span class="hero-dot"></span>
+            <span>Romantic Drama</span>
+          </div>
+          <div class="hero-btns">
+            <button class="btn-play" onclick="openPlayer('Pehli Mohabbat','Romantic Drama · Hindi','Pehle pyaar ki woh tazgi jo kabhi nahi bhulayi.',['👑'],'bg-purple','dQw4w9WgXcQ')">▶ Dekho</button>
+            <button class="btn-list" onclick="addToMyList('Pehli Mohabbat','bg-purple','👑')">+ List</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-dots">
+        <button class="hero-dot-btn active" onclick="goSlide(0)"></button>
+        <button class="hero-dot-btn" onclick="goSlide(1)"></button>
+        <button class="hero-dot-btn" onclick="goSlide(2)"></button>
+      </div>
+    </div>
+
+    <!-- Genre Tabs -->
+    <div class="genre-tabs">
+      <button class="gtab active" onclick="setTab(this)">Sab</button>
+      <button class="gtab" onclick="setTab(this)">💕 Romance</button>
+      <button class="gtab" onclick="setTab(this)">🎭 Drama</button>
+      <button class="gtab" onclick="setTab(this)">📺 Web Series</button>
+      <button class="gtab" onclick="setTab(this)">😢 Emotional</button>
+      <button class="gtab" onclick="setTab(this)">👨‍👩‍👧 Family</button>
+    </div>
+
+    <!-- Continue Watching -->
+    <div class="sec">
+      <div class="sec-head">
+        <div class="sec-title">▶ Jaari Rakhein</div>
+      </div>
+      <div class="hscroll">
+        <div class="cw-card" onclick="openPlayer('Anupamaa','Family Drama · Hindi','Ek aurat ki apni zindagi ki nai shuruat.',['🌸'],'bg-rose','dQw4w9WgXcQ')">
+          <div class="cw-thumb">
+            <div class="cw-bg bg-rose">🌸</div>
+            <div class="cw-overlay"></div>
+            <div class="cw-play">▶</div>
+          </div>
+          <div class="cw-progress"><div class="cw-bar" style="width:65%"></div></div>
+          <div class="cw-info">
+            <div class="cw-name">Anupamaa</div>
+            <div class="cw-ep">S3 Ep 42 · 35 min baaki</div>
+          </div>
+        </div>
+        <div class="cw-card" onclick="openPlayer('Kundali Bhagya','Romance · Hindi','Ek anjaan ladki ki kismat ka khel.',['⭐'],'bg-gold','dQw4w9WgXcQ')">
+          <div class="cw-thumb">
+            <div class="cw-bg bg-gold">⭐</div>
+            <div class="cw-overlay"></div>
+            <div class="cw-play">▶</div>
+          </div>
+          <div class="cw-progress"><div class="cw-bar" style="width:30%"></div></div>
+          <div class="cw-info">
+            <div class="cw-name">Kundali Bhagya</div>
+            <div class="cw-ep">S2 Ep 18 · 22 min baaki</div>
+          </div>
+        </div>
+        <div class="cw-card" onclick="openPlayer('Mirzapur','Crime · Web Series · Hindi','Purvanchal ka khatarnak crime drama.',['👊'],'bg-drama','dQw4w9WgXcQ')">
+          <div class="cw-thumb">
+            <div class="cw-bg bg-drama">👊</div>
+            <div class="cw-overlay"></div>
+            <div class="cw-play">▶</div>
+          </div>
+          <div class="cw-progress"><div class="cw-bar" style="width:80%"></div></div>
+          <div class="cw-info">
+            <div class="cw-name">Mirzapur</div>
+            <div class="cw-ep">S2 Ep 9 · 12 min baaki</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ad Banner -->
+    <div class="ad-card" onclick="showToast('🛍️ Myntra pe ja raha hai...')">
+      <div class="ad-icon-wrap" style="background:rgba(232,67,106,0.15)">💄</div>
+      <div class="ad-content-wrap">
+        <div class="ad-sponsored">Sponsored</div>
+        <div class="ad-title-txt">Nykaa Beauty Sale — 50% Off!</div>
+        <div class="ad-sub-txt">Makeup, skincare aur bahut kuch</div>
+      </div>
+      <button class="ad-cta-btn">Shop</button>
+    </div>
+
+    <!-- Popular Romance -->
+    <div class="sec">
+      <div class="sec-head">
+        <div class="sec-title">💕 Popular Romance</div>
+        <div class="sec-all" onclick="showToast('Sab romance shows...')">Sab dekho</div>
+      </div>
+      <div class="hscroll">
+        <div class="show-card sc-portrait" onclick="openPlayer('Dil Hi Toh Hai','Romance · Hindi · Web Series','Pyaar ki ek nai duniya.',['❤️'],'bg-rose','dQw4w9WgXcQ')">
+          <div class="sc-thumb"><div class="sc-bg bg-rose">❤️</div><div class="sc-overlay"></div></div>
+          <div class="sc-top-badge sc-free">FREE</div>
+          <div class="sc-rating">⭐ 8.1</div>
+          <div class="sc-info"><div class="sc-name">Dil Hi Toh Hai</div><div class="sc-sub">Romance · 3 Seasons</div></div>
+        </div>
+        <div class="show-card sc-portrait" onclick="openPlayer('Broken But Beautiful','Romance · Hindi · Web Series','Toot ke bhi mohabbat hoti hai.',['💔'],'bg-purple','dQw4w9WgXcQ')">
+          <div class="sc-thumb"><div class="sc-bg bg-purple">💔</div><div class="sc-overlay"></div></div>
+          <div class="sc-top-badge sc-pro">👑 PRO</div>
+          <div class="sc-rating">⭐ 8.8</div>
+          <div class="sc-info"><div class="sc-name">Broken But Beautiful</div><div class="sc-sub">Romance · 3 Seasons</div></div>
+        </div>
+        <div class="show-card sc-portrait" onclick="openPlayer('Four More Shots Please','Romance · Comedy · Hindi','Chaar dost aur unki zindagi.',['🥂'],'bg-teal','dQw4w9WgXcQ')">
+          <div class="sc-thumb"><div class="sc-bg bg-teal">🥂</div><div class="sc-overlay"></div></div>
+          <div class="sc-top-badge sc-new">NEW</div>
+          <div class="sc-rating">⭐ 7.9</div>
+          <div class="sc-info"><div class="sc-name">Four More Shots</div><div class="sc-sub">Romance · Comedy</div></div>
+        </div>
+        <div class="show-card sc-portrait" onclick="openPlayer('Made in Heaven','Drama · Hindi','Shaadi ke peeche ki sachchi duniya.',['💍'],'bg-gold','dQw4w9WgXcQ')">
+          <div class="sc-thumb"><div class="sc-bg bg-gold">💍</div><div class="sc-overlay"></div></div>
+          <div class="sc-top-badge sc-pro">👑 PRO</div>
+          <div class="sc-rating">⭐ 8.6</div>
+          <div class="sc-info"><div class="sc-name">Made in Heaven</div><div class="sc-sub">Drama · 2 Seasons</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Affiliate -->
+    <div class="aff-card" onclick="showToast('📱 Flipkart pe ja raha hai...')">
+      <div class="aff-icon">📱</div>
+      <div class="aff-info">
+        <div class="aff-label">Affiliate Offer</div>
+        <div class="aff-name">Samsung 55" Smart TV — ₹32,999</div>
+      </div>
+      <button class="aff-btn-small">Buy</button>
+    </div>
+
+    <!-- Drama Web Series -->
+    <div class="sec">
+      <div class="sec-head">
+        <div class="sec-title">🎭 Drama Web Series</div>
+        <div class="sec-all">Sab dekho</div>
+      </div>
+      <div class="hscroll">
+        <div class="show-card sc-landscape" onclick="openPlayer('Panchayat','Comedy · Drama · Hindi','Gaon ki pyaari zindagi.',['😄'],'bg-gold','dQw4w9WgXcQ')">
+          <div class="sc-thumb"><div class="sc-bg bg-gold">😄</div><div class="sc-overlay"></div></div>
+          <div class="sc-top-badge sc-free">FREE</div>
+          <div class="sc-rating">⭐ 9.2</div>
+          <div class="sc-info"><div class="sc-name">Panchayat</div><div class="sc-sub">Comedy Drama · S1-S3</div></div>
+        </div>
+        <div class="show-card sc-landscape" onclick="openPlayer('Delhi Crime','Crime · Drama · Hindi','Delhi ki ek sachchi ghatna par aadharit.',['🚔'],'bg-dark','dQw4w9WgXcQ')">
+          <div class="sc-thumb"><div class="sc-bg bg-dark">🚔</div><div class="sc-overlay"></div></div>
+          <div class="sc-top-badge sc-pro">👑 PRO</div>
+          <div class="sc-rating">⭐ 8.5</div>
+          <div class="sc-info"><div class="sc-name">Delhi Crime</div><div class="sc-sub">Crime Drama · S1 S2</div></div>
+        </div>
+        <div class="show-card sc-landscape" onclick="openPlayer('Aspirants','Drama · Hindi','UPSC ki taiyari aur dosti.',['📚'],'bg-drama','dQw4w9WgXcQ')">
+          <div class="sc-thumb"><div class="sc-bg bg-drama">📚</div><div class="sc-overlay"></div></div>
+          <div class="sc-top-badge sc-free">FREE</div>
+          <div class="sc-rating">⭐ 9.0</div>
+          <div class="sc-info"><div class="sc-name">Aspirants</div><div class="sc-sub">Drama · Youth</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Premium -->
+    <div class="premium-wall">
+      <div class="pw-glow"></div>
+      <div class="pw-label">👑 Show TV Premium</div>
+      <div class="pw-title">Sirf ₹99 mein — Sab Kuch Unlocked!</div>
+      <div class="pw-features">
+        <div class="pw-feat"><span class="pw-feat-icon">🚫</span>Koi bhi ad nahi</div>
+        <div class="pw-feat"><span class="pw-feat-icon">📺</span>Exclusive web series sirf Premium pe</div>
+        <div class="pw-feat"><span class="pw-feat-icon">⬇️</span>Offline download karo</div>
+        <div class="pw-feat"><span class="pw-feat-icon">🔥</span>New episodes sabse pehle</div>
+      </div>
+      <div class="pw-plans">
+        <div class="pw-plan" id="plan-m" onclick="selectPlan('m')">
+          <div class="pw-plan-name">Monthly</div>
+          <div class="pw-plan-price">₹99</div>
+          <div class="pw-plan-save">&nbsp;</div>
+        </div>
+        <div class="pw-plan selected" id="plan-y" onclick="selectPlan('y')">
+          <div class="pw-plan-name">Yearly</div>
+          <div class="pw-plan-price">₹499</div>
+          <div class="pw-plan-save">58% Bachat!</div>
+        </div>
+        <div class="pw-plan" id="plan-3" onclick="selectPlan('3')">
+          <div class="pw-plan-name">3 Mahine</div>
+          <div class="pw-plan-price">₹199</div>
+          <div class="pw-plan-save">33% Off</div>
+        </div>
+      </div>
+      <button class="pw-btn" onclick="showToast('👑 UPI payment page khul raha hai!')">👑 Premium Lo — Abhi</button>
+    </div>
+
+    <!-- Emotional -->
+    <div class="sec" style="padding-bottom:8px;">
+      <div class="sec-head">
+        <div class="sec-title">😢 Emotional Hits</div>
+        <div class="sec-all">Sab dekho</div>
+      </div>
+      <div class="hscroll">
+        <div class="show-card sc-portrait" onclick="openPlayer('Thappad','Drama · Hindi Movie','Ek thappad aur ek aurat ki nayi soch.',['😤'],'bg-rose','dQw4w9WgXcQ')">
+          <div class="sc-thumb"><div class="sc-bg bg-rose">😤</div><div class="sc-overlay"></div></div>
+          <div class="sc-top-badge sc-free">FREE</div>
+          <div class="sc-rating">⭐ 7.8</div>
+          <div class="sc-info"><div class="sc-name">Thappad</div><div class="sc-sub">Drama Movie</div></div>
+        </div>
+        <div class="show-card sc-portrait" onclick="openPlayer('Dil Dhadakne Do','Family · Hindi Movie','Ek family ki sachchi kahani.',['🚢'],'bg-teal','dQw4w9WgXcQ')">
+          <div class="sc-thumb"><div class="sc-bg bg-teal">🚢</div><div class="sc-overlay"></div></div>
+          <div class="sc-top-badge sc-free">FREE</div>
+          <div class="sc-rating">⭐ 7.6</div>
+          <div class="sc-info"><div class="sc-name">Dil Dhadakne Do</div><div class="sc-sub">Family Drama</div></div>
+        </div>
+        <div class="show-card sc-portrait" onclick="openPlayer('Gehraiyaan','Drama · Romance · Hindi','Rishtein ki gehraiyon mein kho jaana.',['🌊'],'bg-drama','dQw4w9WgXcQ')">
+          <div class="sc-thumb"><div class="sc-bg bg-drama">🌊</div><div class="sc-overlay"></div></div>
+          <div class="sc-top-badge sc-pro">👑 PRO</div>
+          <div class="sc-rating">⭐ 6.9</div>
+          <div class="sc-info"><div class="sc-name">Gehraiyaan</div><div class="sc-sub">Romance Drama</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SEARCH PAGE -->
+  <div class="page" id="page-search">
+    <div class="search-input-wrap">
+      <div class="search-input-box">
+        <span class="si-icon">🔍</span>
+        <input class="si-input" type="text" placeholder="Show ya movie ka naam dhundo..." oninput="handleSearch(this.value)"/>
+      </div>
+    </div>
+    <div class="search-genres">
+      <div class="sg-title">Genres Browse Karo</div>
+      <div class="sg-grid">
+        <div class="sg-card" style="background:linear-gradient(135deg,#2d0818,#5a1030);" onclick="showToast('💕 Romance shows...')">
+          <div class="sg-name">Romance</div><div class="sg-count">80+ shows</div>
+          <div class="sg-emoji">💕</div>
+        </div>
+        <div class="sg-card" style="background:linear-gradient(135deg,#0d1020,#1a2050);" onclick="showToast('🎭 Drama shows...')">
+          <div class="sg-name">Drama</div><div class="sg-count">120+ shows</div>
+          <div class="sg-emoji">🎭</div>
+        </div>
+        <div class="sg-card" style="background:linear-gradient(135deg,#150820,#2d1050);" onclick="showToast('📺 Web Series...')">
+          <div class="sg-name">Web Series</div><div class="sg-count">60+ shows</div>
+          <div class="sg-emoji">📺</div>
+        </div>
+        <div class="sg-card" style="background:linear-gradient(135deg,#0d1a10,#1a3020);" onclick="showToast('👨‍👩‍👧 Family shows...')">
+          <div class="sg-name">Family</div><div class="sg-count">90+ shows</div>
+          <div class="sg-emoji">👨‍👩‍👧</div>
+        </div>
+        <div class="sg-card" style="background:linear-gradient(135deg,#1a1000,#3d2800);" onclick="showToast('😢 Emotional shows...')">
+          <div class="sg-name">Emotional</div><div class="sg-count">50+ shows</div>
+          <div class="sg-emoji">😢</div>
+        </div>
+        <div class="sg-card" style="background:linear-gradient(135deg,#001a18,#003330);" onclick="showToast('😄 Comedy shows...')">
+          <div class="sg-name">Comedy</div><div class="sg-count">70+ shows</div>
+          <div class="sg-emoji">😄</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MY LIST -->
+  <div class="page" id="page-mylist">
+    <div style="padding:18px 16px 10px;">
+      <div style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;">❤️ Meri List</div>
+    </div>
+    <div class="mylist-empty" id="mylistEmpty">
+      <span class="mle-emoji">📺</span>
+      <div class="mle-text">Abhi list khaali hai!<br><span style="font-size:0.72rem;">"+ List" dabao kisi bhi show pe</span></div>
+    </div>
+    <div class="mylist-grid" id="mylistGrid"></div>
+  </div>
+
+  <!-- PROFILE PAGE -->
+  <div class="page" id="page-profile">
+    <div class="profile-header">
+      <div class="ph-glow"></div>
+      <div class="ph-avatar">👤</div>
+      <div class="ph-name">Show TV User</div>
+      <div class="ph-plan">Free Plan</div>
+      <div class="ph-stats">
+        <div class="ph-stat"><div class="phs-val" id="pWatched">3</div><div class="phs-label">Dekhe</div></div>
+        <div class="ph-stat"><div class="phs-val" id="pSaved">0</div><div class="phs-label">Saved</div></div>
+        <div class="ph-stat"><div class="phs-val">Free</div><div class="phs-label">Plan</div></div>
+      </div>
+    </div>
+
+    <div class="menu-list">
+      <div class="menu-item" onclick="showToast('📺 Watch History')">
+        <span class="mi-icon">📺</span><span class="mi-label">Watch History</span><span class="mi-arrow">›</span>
+      </div>
+      <div class="menu-item" onclick="showPage('mylist',document.querySelectorAll('.nb')[2])">
+        <span class="mi-icon">❤️</span><span class="mi-label">Meri List</span><span class="mi-arrow">›</span>
+      </div>
+      <div class="menu-item" onclick="showToast('⬇️ Downloads — Premium mein!')">
+        <span class="mi-icon">⬇️</span><span class="mi-label">Downloads</span><span class="mi-arrow">›</span>
+      </div>
+      <div class="menu-item" onclick="showToast('⚙️ Settings')">
+        <span class="mi-icon">⚙️</span><span class="mi-label">Settings</span><span class="mi-arrow">›</span>
+      </div>
+    </div>
+
+    <div style="margin:0 16px 16px;background:linear-gradient(135deg,#160810,#1e1020);border:1px solid rgba(232,67,106,0.2);border-radius:14px;padding:16px;">
+      <div style="font-size:0.6rem;color:var(--rose);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:8px;">💰 Owner Earning Info</div>
+      <div style="font-size:0.75rem;line-height:1.9;color:var(--muted);">
+        • <strong style="color:var(--text);">Ads:</strong> ₹150–600 per 1000 views<br>
+        • <strong style="color:var(--text);">Premium:</strong> ₹99–499/user/month<br>
+        • <strong style="color:var(--text);">Affiliate:</strong> 5–12% per sale<br>
+        • 500 users = <strong style="color:var(--green);">₹3,000–15,000/month</strong>
+      </div>
+    </div>
+
+    <div style="margin:0 16px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;">
+      <div style="font-size:0.6rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">📋 YouTube Videos Kaise Add Karein</div>
+      <div style="font-size:0.72rem;line-height:1.9;color:var(--muted);">
+        1. YouTube pe <strong style="color:var(--text);">free movie</strong> dhundo<br>
+        2. URL se <strong style="color:var(--text);">Video ID</strong> copy karo<br>
+        (youtube.com/watch?v=<strong style="color:var(--rose);">YAHAN_SE</strong>)<br>
+        3. App ke code mein ID replace karo<br>
+        4. Done — real video chalegi! ✅
+      </div>
+    </div>
+
+    <div style="height:20px;"></div>
+  </div>
+
+</main>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nb active" onclick="showPage('home',this)">
+    <span class="nb-icon">🏠</span><span class="nb-label">Home</span>
+  </button>
+  <button class="nb" onclick="showPage('search',this)">
+    <span class="nb-icon">🔍</span><span class="nb-label">Search</span>
+  </button>
+  <button class="nb" onclick="showPage('mylist',this)">
+    <span class="nb-icon">❤️</span><span class="nb-label">My List</span>
+  </button>
+  <button class="nb" onclick="showPage('profile',this)">
+    <span class="nb-icon">👤</span><span class="nb-label">Profile</span>
+  </button>
+</nav>
+
+<!-- PLAYER MODAL -->
+<div class="player-modal" id="playerModal">
+  <div class="pm-header">
+    <button class="pm-back" onclick="closePlayer()">←</button>
+    <div class="pm-title" id="pmTitle">Loading...</div>
+  </div>
+  <div class="pm-body">
+    <div class="pm-screen" id="pmScreen">
+      <div class="pm-screen-bg" id="pmBg"></div>
+      <div class="pm-emoji" id="pmEmoji"></div>
+      <div class="pm-play-overlay" id="pmPlayOverlay">
+        <div class="pm-play-circle" onclick="startPlayback()">▶</div>
+      </div>
+      <iframe class="yt-frame" id="ytFrame" allowfullscreen allow="autoplay"></iframe>
+      <!-- Preroll -->
+      <div class="preroll-overlay" id="prerollOverlay" style="display:none;">
+        <div class="pr-ad-label">📺 Advertisement</div>
+        <div class="pr-icon">🛍️</div>
+        <div class="pr-title">Meesho Sale — 60% Off!</div>
+        <div class="pr-sub">Fashion, home decor aur bahut kuch</div>
+        <div class="pr-timer" id="prTimer">5 mein skip hoga...</div>
+        <button class="pr-skip" id="prSkip" onclick="skipAd()">Skip Ad →</button>
+      </div>
+    </div>
+
+    <div class="pm-info">
+      <div class="pm-show-title" id="pmShowTitle"></div>
+      <div class="pm-badges" id="pmBadges"></div>
+      <div class="pm-desc" id="pmDesc"></div>
+      <div class="pm-actions">
+        <div class="pm-action" onclick="addCurrentToList()"><div class="pm-action-icon">❤️</div><div class="pm-action-label">My List</div></div>
+        <div class="pm-action" onclick="shareShow()"><div class="pm-action-icon">📤</div><div class="pm-action-label">Share</div></div>
+        <div class="pm-action" onclick="showToast('⬇️ Download — Premium mein!')"><div class="pm-action-icon">⬇️</div><div class="pm-action-label">Download</div></div>
+        <div class="pm-action" onclick="showToast('⭐ Rating diya!')"><div class="pm-action-icon">⭐</div><div class="pm-action-label">Rate</div></div>
+      </div>
+    </div>
+
+    <div class="episodes-section">
+      <div class="ep-title">Episodes</div>
+      <div id="episodesList"></div>
+    </div>
+
+    <div class="aff-card" onclick="showToast('🎧 Amazon pe redirect...')">
+      <div class="aff-icon">🎧</div>
+      <div class="aff-info">
+        <div class="aff-label">Sponsored</div>
+        <div class="aff-name">Boat Airdopes — ₹799 mein</div>
+      </div>
+      <button class="aff-btn-small">Buy</button>
+    </div>
+    <div style="height:20px;"></div>
+  </div>
+</div>
+
+<script>
+// SPLASH
+setTimeout(()=>{
+  const s=document.getElementById('splash');
+  s.style.opacity='0';
+  setTimeout(()=>s.style.display='none',800);
+},2400);
+
+// TOAST
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2600);
+}
+
+// PAGE
+function showPage(name,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  btn.classList.add('active');
+  document.querySelector('main').scrollTo(0,0);
+}
+
+// HERO CAROUSEL
+let curSlide=0;
+const slides=document.querySelectorAll('.hero-slide');
+const dotBtns=document.querySelectorAll('.hero-dot-btn');
+function goSlide(n){
+  slides[curSlide].classList.remove('active');
+  dotBtns[curSlide].classList.remove('active');
+  curSlide=n;
+  slides[curSlide].classList.add('active');
+  dotBtns[curSlide].classList.add('active');
+}
+setInterval(()=>goSlide((curSlide+1)%slides.length),4000);
+
+// GENRE TAB
+function setTab(btn){
+  document.querySelectorAll('.gtab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  showToast('🎬 '+btn.textContent+' filter laga!');
+}
+
+// PLAN
+function selectPlan(p){
+  document.querySelectorAll('.pw-plan').forEach(pl=>pl.classList.remove('selected'));
+  document.getElementById('plan-'+p).classList.add('selected');
+  const prices={m:'₹99/month',y:'₹499/year','3':'₹199 / 3 months'};
+  showToast('✅ '+prices[p]+' plan select!');
+}
+function openPremium(){
+  document.querySelector('main').scrollTo({top:9999,behavior:'smooth'});
+  showToast('👑 Premium section mein jaao!');
+}
+
+// MY LIST
+let myList=[];
+function addToMyList(name,bg,emoji){
+  if(myList.find(s=>s.name===name)){showToast('✅ Pehle se list mein hai!');return;}
+  myList.push({name,bg,emoji});
+  updateMyList();
+  document.getElementById('pSaved').textContent=myList.length;
+  showToast('❤️ "'+name+'" list mein add kiya!');
+}
+function updateMyList(){
+  const grid=document.getElementById('mylistGrid');
+  const empty=document.getElementById('mylistEmpty');
+  if(myList.length===0){empty.style.display='block';grid.innerHTML='';return;}
+  empty.style.display='none';
+  grid.innerHTML=myList.map(s=>`
+    <div class="show-card sc-portrait" style="width:100%;" onclick="openPlayer('${s.name}','Drama · Hindi','Tumhari saved show.',['${s.emoji}'],'${s.bg}','dQw4w9WgXcQ')">
+      <div class="sc-thumb" style="height:160px;"><div class="sc-bg ${s.bg}">${s.emoji}</div><div class="sc-overlay"></div></div>
+      <div class="sc-info"><div class="sc-name">${s.name}</div></div>
+    </div>`).join('');
+}
+
+// PLAYER
+let currentShow={};
+let prerollTimer;
+function openPlayer(title,meta,desc,emojiArr,bgClass,ytId){
+  currentShow={title,meta,desc,emoji:emojiArr[0],bgClass,ytId};
+  document.getElementById('pmTitle').textContent=title;
+  document.getElementById('pmShowTitle').textContent=title;
+  document.getElementById('pmBg').className='pm-screen-bg '+bgClass;
+  document.getElementById('pmEmoji').textContent=emojiArr[0];
+  document.getElementById('pmBadges').innerHTML=meta.split(' · ').map(m=>`<span class="pm-badge">${m}</span>`).join('');
+  document.getElementById('pmDesc').textContent=desc;
+  document.getElementById('pmPlayOverlay').style.display='flex';
+  document.getElementById('ytFrame').style.display='none';
+  document.getElementById('ytFrame').src='';
+  document.getElementById('prerollOverlay').style.display='none';
+  generateEpisodes(title);
+  document.getElementById('playerModal').classList.add('show');
+}
+function closePlayer(){
+  clearInterval(prerollTimer);
+  document.getElementById('ytFrame').src='';
+  document.getElementById('playerModal').classList.remove('show');
+}
+function startPlayback(){
+  document.getElementById('pmPlayOverlay').style.display='none';
+  document.getElementById('prerollOverlay').style.display='flex';
+  document.getElementById('prerollOverlay').style.flexDirection='column';
+  document.getElementById('prerollOverlay').style.alignItems='center';
+  document.getElementById('prerollOverlay').style.justifyContent='center';
+  document.getElementById('prSkip').style.display='none';
+  let s=5;
+  document.getElementById('prTimer').textContent=s+' mein skip hoga...';
+  prerollTimer=setInterval(()=>{
+    s--;
+    if(s<=0){
+      clearInterval(prerollTimer);
+      document.getElementById('prSkip').style.display='block';
+      document.getElementById('prTimer').textContent='Ab skip kar sakte ho!';
+    } else {
+      document.getElementById('prTimer').textContent=s+' mein skip hoga...';
+    }
+  },1000);
+}
+function skipAd(){
+  clearInterval(prerollTimer);
+  document.getElementById('prerollOverlay').style.display='none';
+  const frame=document.getElementById('ytFrame');
+  frame.style.display='block';
+  frame.src='https://www.youtube.com/embed/'+currentShow.ytId+'?autoplay=1&rel=0';
+  showToast('▶ Video chal rahi hai!');
+}
+function generateEpisodes(title){
+  const eps=[
+    {n:'Episode 1',d:'Kahani ki shuruat'},
+    {n:'Episode 2',d:'Naye raaz saamne aate hain'},
+    {n:'Episode 3',d:'Rishton mein parichay'},
+    {n:'Episode 4',d:'Ek naya mod'},
+    {n:'Episode 5',d:'Dil ki baat'},
+  ];
+  document.getElementById('episodesList').innerHTML=eps.map((e,i)=>`
+    <div class="ep-item" onclick="showToast('▶ ${e.n} chal rahi hai!')">
+      <div class="ep-num">E${i+1}</div>
+      <div class="ep-info"><div class="ep-name">${e.n}</div><div class="ep-dur">${e.d} · 22 min</div></div>
+      <div class="ep-play">▶</div>
+    </div>`).join('');
+}
+function addCurrentToList(){
+  addToMyList(currentShow.title,currentShow.bgClass,currentShow.emoji);
+}
+function shareShow(){
+  if(navigator.share){navigator.share({title:currentShow.title,text:'Show TV pe dekho: '+currentShow.title,url:window.location.href});}
+  else{showToast('🔗 Link copy kiya!');}
+}
+
+function handleSearch(v){
+  if(v.length>2)showToast('🔍 "'+v+'" search ho raha hai...');
+}
+</script>
+</body>
+</html>
