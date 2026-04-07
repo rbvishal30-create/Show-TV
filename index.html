@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<meta name="theme-color" content="#0a0608"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<title>Show TV — Hindi Entertainment Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{--bg:#0a0608;--bg2:#100c0e;--card:#161014;--card2:#1e1620;--border:#2a1f28;--text:#f5eef8;--muted:#7a6882;--rose:#e8436a;--gold:#f0c060;--green:#4ade80;--teal:#2dd4bf;--grad-rose:linear-gradient(135deg,#e8436a,#ff9a9e);--grad-gold:linear-gradient(135deg,#f0c060,#e8436a);}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;display:flex;flex-direction:column;max-width:430px;margin:0 auto;box-shadow:0 0 80px rgba(232,67,106,0.1);}
+#splash{position:fixed;inset:0;z-index:9999;background:radial-gradient(ellipse at center,#1a0810 0%,#0a0608 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.8s ease;}
+.splash-tv{font-size:4rem;text-align:center;animation:tvPulse 1.5s ease infinite;}
+@keyframes tvPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+.splash-title{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:900;color:var(--text);letter-spacing:0.05em;text-align:center;margin-top:16px;}
+.splash-title span{background:var(--grad-rose);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.splash-sub{font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);margin-top:8px;}
+.splash-bar{width:160px;height:2px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:36px;}
+.splash-bar-fill{height:100%;width:0%;background:var(--grad-rose);border-radius:2px;animation:barFill 2.2s ease forwards;}
+@keyframes barFill{to{width:100%;}}
+header{flex-shrink:0;background:rgba(10,6,8,0.97);padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);backdrop-filter:blur(20px);}
+.logo{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;}
+.logo span{background:var(--grad-rose);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hbtn{background:var(--card2);border:1px solid var(--border);border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:0.85rem;}
+main{flex:1;overflow-y:auto;overflow-x:hidden;padding-bottom:72px;}
+main::-webkit-scrollbar{width:2px;}
+main::-webkit-scrollbar-thumb{background:var(--border);}
+.page{display:none;}
+.page.active{display:block;animation:fadeUp 0.3s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.hero{position:relative;height:230px;overflow:hidden;}
+.hero-slide{position:absolute;inset:0;opacity:0;transition:opacity 0.9s ease;}
+.hero-slide.active{opacity:1;}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,var(--bg) 0%,rgba(10,6,8,0.2) 70%,transparent 100%);}
+.hero-content{position:absolute;bottom:0;left:0;right:0;padding:16px;}
+.hbadges{display:flex;gap:5px;margin-bottom:6px;}
+.hbadge{font-size:0.52rem;font-weight:600;padding:2px 7px;border-radius:4px;}
+.hb-r{background:rgba(232,67,106,0.25);color:#ff6b8a;}
+.hb-f{background:rgba(74,222,128,0.2);color:var(--green);}
+.hero-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;line-height:1.15;margin-bottom:5px;}
+.hero-meta{font-size:0.62rem;color:var(--muted);margin-bottom:10px;}
+.hero-btns{display:flex;gap:6px;flex-wrap:wrap;}
+.hbtn2{display:inline-flex;align-items:center;gap:5px;border:none;border-radius:8px;padding:8px 14px;font-family:'DM Sans',sans-serif;font-size:0.68rem;font-weight:700;cursor:pointer;transition:transform 0.2s;text-decoration:none;color:white;}
+.hbtn2:active{transform:scale(0.95);}
+.btn-prime{background:#00a8e0;}
+.btn-jio{background:#0d7cf2;}
+.btn-hotstar{background:#1f80e0;}
+.btn-mx{background:#e8436a;}
+.btn-yt{background:#ff0000;}
+.btn-free{background:#4ade80;color:#000;}
+.hero-dots{position:absolute;bottom:10px;right:14px;display:flex;gap:4px;}
+.hdot{width:5px;height:5px;border-radius:3px;background:rgba(255,255,255,0.3);border:none;cursor:pointer;transition:all 0.3s;}
+.hdot.active{width:16px;background:var(--rose);}
+.platform-row{display:flex;gap:8px;padding:12px 16px;overflow-x:auto;scrollbar-width:none;}
+.platform-row::-webkit-scrollbar{display:none;}
+.platform-chip{flex-shrink:0;display:flex;align-items:center;gap:5px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:0.65rem;font-weight:600;cursor:pointer;text-decoration:none;color:var(--text);}
+.gtabs{display:flex;gap:6px;padding:0 16px 10px;overflow-x:auto;scrollbar-width:none;}
+.gtabs::-webkit-scrollbar{display:none;}
+.gtab{flex-shrink:0;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-family:'DM Sans',sans-serif;font-size:0.68rem;font-weight:500;color:var(--muted);cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.gtab.active{background:var(--rose);border-color:var(--rose);color:white;}
+.sec{padding:14px 0 4px;}
+.sec-head{display:flex;justify-content:space-between;align-items:center;padding:0 16px;margin-bottom:10px;}
+.sec-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;}
+.sec-all{font-size:0.63rem;color:var(--rose);cursor:pointer;}
+.hscroll{display:flex;gap:10px;padding:0 16px 6px;overflow-x:auto;scrollbar-width:none;}
+.hscroll::-webkit-scrollbar{display:none;}
+.sc{flex-shrink:0;border-radius:13px;overflow:hidden;cursor:pointer;position:relative;transition:transform 0.2s;}
+.sc:active{transform:scale(0.94);}
+.sc-p{width:130px;}
+.sc-p .sc-t{height:185px;}
+.sc-l{width:200px;}
+.sc-l .sc-t{height:112px;}
+.sc-t{position:relative;overflow:hidden;border-radius:13px;}
+.sc-bg{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:3rem;}
+.sc-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,6,8,0.95) 0%,transparent 55%);border-radius:13px;}
+.sc-badge{position:absolute;top:7px;left:7px;font-size:0.5rem;font-weight:700;padding:2px 6px;border-radius:4px;}
+.sc-free{background:rgba(74,222,128,0.2);color:var(--green);}
+.sc-prime{background:rgba(0,168,224,0.3);color:#60d8ff;}
+.sc-hot{background:rgba(31,128,224,0.3);color:#60b0ff;}
+.sc-mx{background:rgba(232,67,106,0.3);color:#ff6b8a;}
+.sc-jio{background:rgba(13,124,242,0.3);color:#60afff;}
+.sc-rat{position:absolute;top:7px;right:7px;font-size:0.53rem;font-weight:600;background:rgba(0,0,0,0.65);padding:2px 6px;border-radius:4px;color:var(--gold);}
+.sc-info{position:absolute;bottom:0;left:0;right:0;padding:8px 9px;}
+.sc-name{font-size:0.72rem;font-weight:600;color:var(--text);line-height:1.2;}
+.sc-sub{font-size:0.56rem;color:var(--muted);margin-top:2px;}
+.ad-strip{margin:4px 16px 8px;background:linear-gradient(135deg,#160810,#200d18);border:1px solid rgba(232,67,106,0.18);border-radius:13px;padding:11px 13px;display:flex;align-items:center;gap:11px;cursor:pointer;}
+.ad-ico{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+.ad-c{flex:1;}
+.ad-sp{font-size:0.48rem;color:var(--muted);letter-spacing:0.18em;text-transform:uppercase;}
+.ad-t{font-size:0.78rem;font-weight:600;}
+.ad-s{font-size:0.62rem;color:var(--muted);margin-top:1px;}
+.ad-btn{background:var(--grad-rose);border:none;border-radius:8px;padding:7px 13px;color:white;font-family:'DM Sans',sans-serif;font-size:0.63rem;font-weight:600;cursor:pointer;flex-shrink:0;}
+/* DETAIL MODAL */
+.detail-modal{display:none;position:fixed;inset:0;background:var(--bg);z-index:800;flex-direction:column;overflow-y:auto;}
+.detail-modal.show{display:flex;animation:slideUp 0.35s cubic-bezier(0.32,0.72,0,1);}
+@keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+.dm-hdr{display:flex;align-items:center;gap:11px;padding:13px 16px;background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;}
+.dm-back{background:var(--card2);border:none;width:35px;height:35px;border-radius:50%;color:var(--text);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.dm-title{font-family:'Playfair Display',serif;font-size:0.95rem;font-weight:700;flex:1;}
+.dm-thumb{height:200px;display:flex;align-items:center;justify-content:center;font-size:5rem;position:relative;}
+.dm-ov{position:absolute;inset:0;background:linear-gradient(to top,var(--bg) 0%,transparent 60%);}
+.dm-info{padding:16px;}
+.dm-show-title{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;margin-bottom:6px;}
+.dm-badges{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px;}
+.dm-badge{font-size:0.56rem;padding:3px 8px;border-radius:4px;background:var(--card2);border:1px solid var(--border);color:var(--muted);}
+.dm-desc{font-size:0.75rem;color:var(--muted);line-height:1.7;margin-bottom:16px;}
+.dm-actions{display:flex;gap:8px;margin-bottom:16px;}
+.dm-act{flex:1;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 5px;text-align:center;cursor:pointer;}
+.dm-act-ico{font-size:1.05rem;}
+.dm-act-lbl{font-size:0.52rem;color:var(--muted);margin-top:3px;}
+.watch-sec{padding:0 16px 16px;}
+.watch-title{font-size:0.7rem;font-weight:700;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:12px;}
+.watch-btns{display:flex;flex-direction:column;gap:10px;}
+.watch-btn{display:flex;align-items:center;gap:14px;border:none;border-radius:14px;padding:14px 16px;cursor:pointer;transition:transform 0.2s;text-decoration:none;width:100%;}
+.watch-btn:active{transform:scale(0.97);}
+.wb-prime{background:linear-gradient(135deg,#00668a,#00a8e0);}
+.wb-jio{background:linear-gradient(135deg,#0a4fa0,#0d7cf2);}
+.wb-hotstar{background:linear-gradient(135deg,#1040a0,#1f80e0);}
+.wb-mx{background:linear-gradient(135deg,#8a0020,#e8436a);}
+.wb-yt{background:linear-gradient(135deg,#8a0000,#ff0000);}
+.wb-free{background:linear-gradient(135deg,#1a6630,#4ade80);}
+.wb-icon{font-size:1.4rem;flex-shrink:0;}
+.wb-text{flex:1;text-align:left;}
+.wb-name{font-size:0.85rem;font-weight:700;color:white;}
+.wb-sub{font-size:0.62rem;color:rgba(255,255,255,0.7);margin-top:2px;}
+.wb-arrow{color:rgba(255,255,255,0.6);}
+.aff{margin:0 16px 16px;background:linear-gradient(135deg,#080e16,#0d1520);border:1px solid rgba(45,212,191,0.14);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:9px;cursor:pointer;text-decoration:none;}
+.aff-ico{font-size:1.2rem;}
+.aff-info{flex:1;}
+.aff-lbl{font-size:0.46rem;color:var(--teal);letter-spacing:0.13em;text-transform:uppercase;}
+.aff-name{font-size:0.75rem;font-weight:600;color:var(--text);}
+.aff-btn{background:var(--teal);border:none;border-radius:7px;padding:6px 11px;color:#000;font-family:'DM Sans',sans-serif;font-size:0.6rem;font-weight:700;cursor:pointer;}
+.search-wrap{padding:13px 16px;background:rgba(10,6,8,0.97);}
+.search-box{display:flex;align-items:center;gap:9px;background:var(--card2);border:1px solid var(--border);border-radius:13px;padding:11px 13px;}
+.si-input{flex:1;background:none;border:none;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.85rem;outline:none;}
+.si-input::placeholder{color:var(--muted);}
+.sr-item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin:0 16px 8px;display:flex;gap:12px;align-items:center;cursor:pointer;}
+.sr-emoji{font-size:1.8rem;width:44px;text-align:center;}
+.sr-info{flex:1;}
+.sr-name{font-size:0.85rem;font-weight:600;}
+.sr-meta{font-size:0.62rem;color:var(--muted);margin-top:2px;}
+.sr-plat{font-size:0.55rem;font-weight:700;padding:2px 7px;border-radius:4px;margin-top:4px;display:inline-block;}
+.mylist-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 16px;}
+.mylist-empty{text-align:center;padding:55px 22px;color:var(--muted);}
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:rgba(10,6,8,0.97);border-top:1px solid var(--border);display:flex;backdrop-filter:blur(24px);z-index:100;padding-bottom:env(safe-area-inset-bottom);}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 5px;background:none;border:none;cursor:pointer;}
+.nb-ico{font-size:1.18rem;transition:transform 0.2s;}
+.nb-lbl{font-size:0.5rem;color:var(--muted);font-family:'DM Sans',sans-serif;}
+.nb.active .nb-ico{transform:scale(1.13);}
+.nb.active .nb-lbl{color:var(--rose);}
+.toast{position:fixed;bottom:82px;left:50%;transform:translateX(-50%) translateY(18px);background:var(--card2);border:1px solid var(--border);border-radius:30px;padding:9px 18px;font-size:0.76rem;font-weight:500;color:var(--text);z-index:9000;transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1);opacity:0;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+.bg-rose{background:linear-gradient(135deg,#2d0818,#5a0f30);}
+.bg-drama{background:linear-gradient(135deg,#0d1020,#1a2050);}
+.bg-gold{background:linear-gradient(135deg,#1a1000,#3d2800);}
+.bg-teal{background:linear-gradient(135deg,#001a18,#003330);}
+.bg-purple{background:linear-gradient(135deg,#150820,#2d1050);}
+.bg-dark{background:linear-gradient(135deg,#0d0d0d,#1a1a1a);}
+.bg-green{background:linear-gradient(135deg,#001a08,#003315);}
+</style>
+</head>
+<body>
+<div id="splash">
+  <div class="splash-tv">📺</div>
+  <div class="splash-title">Show <span>TV</span></div>
+  <div class="splash-sub">Hindi Entertainment Guide</div>
+  <div class="splash-bar"><div class="splash-bar-fill"></div></div>
+</div>
+<div class="toast" id="toast"></div>
+<header>
+  <div class="logo">Show <span>TV</span></div>
+  <div style="display:flex;gap:8px;">
+    <div class="hbtn" onclick="showPage('search',document.querySelectorAll('.nb')[1])">🔍</div>
+    <div class="hbtn" onclick="showToast('👑 Premium coming soon!')">👑</div>
+  </div>
+</header>
+<main>
+  <!-- HOME -->
+  <div class="page active" id="page-home">
+    <div class="hero" id="heroWrap">
+      <div class="hero-slide active">
+        <div class="hero-bg bg-drama" style="position:absolute;inset:0;"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+          <div class="hbadges"><span class="hbadge hb-r">Crime Drama</span><span class="hbadge hb-f">Free on Prime</span></div>
+          <div class="hero-title">Mirzapur</div>
+          <div class="hero-meta">⭐ 8.5 · Hindi · Crime · 3 Seasons</div>
+          <div class="hero-btns">
+            <a class="hbtn2 btn-prime" href="https://www.primevideo.com/search?phrase=mirzapur" target="_blank">📦 Prime Video</a>
+            <button class="hbtn2 btn-jio" onclick="openDetail('Mirzapur','Crime · Drama · Hindi · 3 Seasons','Purvanchal ki duniya mein crime aur power ka khel. Kaleen Bhaiya aur Guddu Bhaiya ki khatarnak kahani.',['👊'],'bg-drama','8.5',[{name:\'Prime Video\',sub:\'Free with Prime subscription\',url:\'https://www.primevideo.com/search?phrase=mirzapur\',cls:\'wb-prime\',ico:\'📦\'},{name:\'JioCinema\',sub:\'Check karo free mein\',url:\'https://www.jiocinema.com\',cls:\'wb-jio\',ico:\'🔵\'}])">▶ Dekho</button>
+          </div>
+        </div>
+      </div>
+      <div class="hero-slide">
+        <div class="hero-bg bg-rose" style="position:absolute;inset:0;"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+          <div class="hbadges"><span class="hbadge hb-r">Family Drama</span><span class="hbadge hb-f">Free on Hotstar</span></div>
+          <div class="hero-title">Anupamaa</div>
+          <div class="hero-meta">⭐ 8.2 · Hindi · Family · Ongoing</div>
+          <div class="hero-btns">
+            <a class="hbtn2 btn-hotstar" href="https://www.hotstar.com/in/tv/anupamaa/s-2180" target="_blank">⭐ JioHotstar</a>
+          </div>
+        </div>
+      </div>
+      <div class="hero-slide">
+        <div class="hero-bg bg-gold" style="position:absolute;inset:0;"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+          <div class="hbadges"><span class="hbadge hb-r">Comedy</span><span class="hbadge hb-f">Free on Prime</span></div>
+          <div class="hero-title">Panchayat</div>
+          <div class="hero-meta">⭐ 9.2 · Hindi · Comedy · 3 Seasons</div>
+          <div class="hero-btns">
+            <a class="hbtn2 btn-prime" href="https://www.primevideo.com/search?phrase=panchayat" target="_blank">📦 Prime Video</a>
+          </div>
+        </div>
+      </div>
+      <div class="hero-dots">
+        <button class="hdot active" onclick="goSlide(0)"></button>
+        <button class="hdot" onclick="goSlide(1)"></button>
+        <button class="hdot" onclick="goSlide(2)"></button>
+      </div>
+    </div>
+
+    <div class="platform-row">
+      <a class="platform-chip" href="https://www.jiocinema.com" target="_blank">🔵 JioCinema</a>
+      <a class="platform-chip" href="https://www.primevideo.com" target="_blank">📦 Prime Video</a>
+      <a class="platform-chip" href="https://www.hotstar.com/in" target="_blank">⭐ JioHotstar</a>
+      <a class="platform-chip" href="https://www.mxplayer.in" target="_blank">🎬 MX Player</a>
+      <a class="platform-chip" href="https://www.youtube.com" target="_blank">▶️ YouTube</a>
+    </div>
+
+    <div class="gtabs">
+      <button class="gtab active" onclick="setTab(this)">Sab</button>
+      <button class="gtab" onclick="setTab(this)">💕 Romance</button>
+      <button class="gtab" onclick="setTab(this)">🎭 Drama</button>
+      <button class="gtab" onclick="setTab(this)">👨‍👩‍👧 Family</button>
+      <button class="gtab" onclick="setTab(this)">😄 Comedy</button>
+      <button class="gtab" onclick="setTab(this)">🔪 Thriller</button>
+    </div>
+
+    <div class="ad-strip" onclick="window.open('https://www.amazon.in','_blank')">
+      <div class="ad-ico" style="background:rgba(255,153,0,0.15)">📱</div>
+      <div class="ad-c"><div class="ad-sp">Sponsored</div><div class="ad-t">Amazon Sale — Smart TV 43" ₹18,999</div><div class="ad-s">Entertainment lovers ke liye best deal!</div></div>
+      <button class="ad-btn">Shop</button>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><div class="sec-title">🔥 Trending Web Series</div><div class="sec-all">Sab dekho</div></div>
+      <div class="hscroll">
+        <div class="sc sc-p" onclick="openDetail('Mirzapur','Crime · Drama · Hindi · 3 Seasons','Purvanchal ki duniya mein crime aur power ka khel.',['👊'],'bg-drama','8.5',[{name:'Prime Video',sub:'Free with Prime',url:'https://www.primevideo.com/search?phrase=mirzapur',cls:'wb-prime',ico:'📦'},{name:'JioCinema',sub:'Free check karo',url:'https://www.jiocinema.com',cls:'wb-jio',ico:'🔵'}])">
+          <div class="sc-t"><div class="sc-bg bg-drama">👊</div><div class="sc-ov"></div></div>
+          <div class="sc-badge sc-prime">Prime</div><div class="sc-rat">⭐ 8.5</div>
+          <div class="sc-info"><div class="sc-name">Mirzapur</div><div class="sc-sub">Crime · 3 Seasons</div></div>
+        </div>
+        <div class="sc sc-p" onclick="openDetail('Panchayat','Comedy · Drama · Hindi · 3 Seasons','Gaon ki pyaari zindagi ki mazedaar kahani.',['😄'],'bg-gold','9.2',[{name:'Prime Video',sub:'Free with Prime',url:'https://www.primevideo.com/search?phrase=panchayat',cls:'wb-prime',ico:'📦'}])">
+          <div class="sc-t"><div class="sc-bg bg-gold">😄</div><div class="sc-ov"></div></div>
+          <div class="sc-badge sc-prime">Prime</div><div class="sc-rat">⭐ 9.2</div>
+          <div class="sc-info"><div class="sc-name">Panchayat</div><div class="sc-sub">Comedy · 3 Seasons</div></div>
+        </div>
+        <div class="sc sc-p" onclick="openDetail('Scam 1992','Drama · True Story · Hindi','India ke sabse bade stock market scam ki sachchi kahani.',['📈'],'bg-drama','9.3',[{name:'SonyLIV',sub:'Subscription chahiye',url:'https://www.sonyliv.com',cls:'wb-hotstar',ico:'🎬'},{name:'MX Player',sub:'Free mein try karo',url:'https://www.mxplayer.in',cls:'wb-mx',ico:'🎬'}])">
+          <div class="sc-t"><div class="sc-bg bg-drama">📈</div><div class="sc-ov"></div></div>
+          <div class="sc-badge sc-mx">SonyLIV</div><div class="sc-rat">⭐ 9.3</div>
+          <div class="sc-info"><div class="sc-name">Scam 1992</div><div class="sc-sub">Drama · True Story</div></div>
+        </div>
+        <div class="sc sc-p" onclick="openDetail('Aspirants','Drama · Youth · Hindi','UPSC ki taiyari aur dosti ki sundar kahani.',['📚'],'bg-purple','9.0',[{name:'YouTube',sub:'Bilkul FREE dekho!',url:'https://www.youtube.com/results?search_query=aspirants+tvf+web+series',cls:'wb-yt',ico:'▶️'},{name:'Prime Video',sub:'Free with Prime',url:'https://www.primevideo.com/search?phrase=aspirants',cls:'wb-prime',ico:'📦'}])">
+          <div class="sc-t"><div class="sc-bg bg-purple">📚</div><div class="sc-ov"></div></div>
+          <div class="sc-badge sc-free">FREE</div><div class="sc-rat">⭐ 9.0</div>
+          <div class="sc-info"><div class="sc-name">Aspirants</div><div class="sc-sub">Drama · Youth</div></div>
+        </div>
+        <div class="sc sc-p" onclick="openDetail('Kota Factory','Drama · Youth · Hindi','Kota ke coaching students ki real zindagi.',['🏫'],'bg-drama','9.1',[{name:'Netflix',sub:'Subscription chahiye',url:'https://www.netflix.com/in/title/81249783',cls:'wb-hotstar',ico:'🎬'},{name:'YouTube',sub:'Season 1 FREE!',url:'https://www.youtube.com/results?search_query=kota+factory+tvf',cls:'wb-yt',ico:'▶️'}])">
+          <div class="sc-t"><div class="sc-bg bg-drama">🏫</div><div class="sc-ov"></div></div>
+          <div class="sc-badge sc-free">S1 FREE</div><div class="sc-rat">⭐ 9.1</div>
+          <div class="sc-info"><div class="sc-name">Kota Factory</div><div class="sc-sub">Drama · Youth</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ad-strip" onclick="window.open('https://www.amazon.in/gp/video/primesignup','_blank')">
+      <div class="ad-ico" style="background:rgba(0,168,224,0.15)">📦</div>
+      <div class="ad-c"><div class="ad-sp">Sponsored</div><div class="ad-t">Amazon Prime — ₹299/month</div><div class="ad-s">Unlimited movies + free delivery!</div></div>
+      <button class="ad-btn">Join Now</button>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head"><div class="sec-title">👨‍👩‍👧 Family Drama</div><div class="sec-all">Sab dekho</div></div>
+      <div class="hscroll">
+        <div class="sc sc-l" onclick="openDetail('Anupamaa','Family · Drama · Hindi · Ongoing','Ek aurat ki apni zindagi ki nayi shuruat ki kahani.',['🌸'],'bg-rose','8.2',[{name:'JioHotstar',sub:'Free mein dekho',url:'https://www.hotstar.com/in/tv/anupamaa/s-2180',cls:'wb-hotstar',ico:'⭐'}])">
+          <div class="sc-t"><div class="sc-bg bg-rose">🌸</div><div class="sc-ov"></div></div>
+          <div class="sc-badge sc-hot">Hotstar</div><div class="sc-rat">⭐ 8.2</div>
+          <div class="sc-info"><div class="sc-name">Anupamaa</div><div class="sc-sub">Family · Ongoing</div></div>
+        </div>
+        <div class="sc sc-l" onclick="openDetail('Taarak Mehta Ka Ooltah Chashmah','Comedy · Family · Hindi · Ongoing','Gokuldham Society ki mazedaar zindagi.',['😂'],'bg-gold','8.5',[{name:'JioCinema',sub:'Free mein dekho',url:'https://www.jiocinema.com/tv-shows/taarak-mehta-ka-ooltah-chashmah/1_6qjaaa6a',cls:'wb-jio',ico:'🔵'},{name:'YouTube',sub:'FREE episodes',url:'https://www.youtube.com/results?search_query=taarak+mehta+ka+ooltah+chashmah',cls:'wb-yt',ico:'▶️'}])">
+          <div class="sc-t"><div class="sc-bg bg-gold">😂</div><div class="sc-ov"></div></div>
+          <div class="sc-badge sc-free">FREE</div><div class="sc-rat">⭐ 8.5</div>
+          <div class="sc-info"><div class="sc-name">Taarak Mehta...</div><div class="sc-sub">Comedy · Ongoing</div></div>
+        </div>
+        <div class="sc sc-l" onclick="openDetail('Yeh Rishta Kya Kehlata Hai','Romance · Family · Hindi','Ek pyaar ki anbhool dastan.',['💕'],'bg-teal','8.0',[{name:'JioHotstar',sub:'Free mein dekho',url:'https://www.hotstar.com/in/tv/yeh-rishta-kya-kehlata-hai/s-905',cls:'wb-hotstar',ico:'⭐'}])">
+          <div class="sc-t"><div class="sc-bg bg-teal">💕</div><div class="sc-ov"></div></div>
+          <div class="sc-badge sc-hot">Hotstar</div><div class="sc-rat">⭐ 8.0</div>
+          <div class="sc-info"><div class="sc-name">Yeh Rishta...</div><div class="sc-sub">Romance · Family</div></div>
+        </div>
+      </div>
+    </div>
+
+    <a class="aff" href="https://www.amazon.in/s?k=smart+tv+43+inch" target="_blank">
+      <div class="aff-ico">📺</div>
+      <div class="aff-info"><div class="aff-lbl">Amazon Affiliate</div><div class="aff-name">Smart TV 43" — Best Price ₹18,999</div></div>
+      <button class="aff-btn">Buy</button>
+    </a>
+
+    <div class="sec">
+      <div class="sec-head"><div class="sec-title">💕 Romance Shows</div><div class="sec-all">Sab dekho</div></div>
+      <div class="hscroll">
+        <div class="sc sc-p" onclick="openDetail('Broken But Beautiful','Romance · Hindi · 3 Seasons','Toot ke bhi mohabbat hoti hai. Veer aur Sameera ki kahani.',['💔'],'bg-purple','8.8',[{name:'MX Player',sub:'Bilkul FREE dekho!',url:'https://www.mxplayer.in/show/watch-broken-but-beautiful-online/season-1/episodes',cls:'wb-free',ico:'🎬'}])">
+          <div class="sc-t"><div class="sc-bg bg-purple">💔</div><div class="sc-ov"></div></div>
+          <div class="sc-badge sc-free">FREE</div><div class="sc-rat">⭐ 8.8</div>
+          <div class="sc-info"><div class="sc-name">Broken But Beautiful</div><div class="sc-sub">Romance · 3 Seasons</div></div>
+        </div>
+        <div class="sc sc-p" onclick="openDetail('Made in Heaven','Drama · Romance · Hindi · 2 Seasons','Shaadi ke peeche ki sachchi duniya.',['💍'],'bg-gold','8.6',[{name:'Prime Video',sub:'Free with Prime',url:'https://www.primevideo.com/search?phrase=made+in+heaven',cls:'wb-prime',ico:'📦'}])">
+          <div class="sc-t"><div class="sc-bg bg-gold">💍</div><div class="sc-ov"></div></div>
+          <div class="sc-badge sc-prime">Prime</div><div class="sc-rat">⭐ 8.6</div>
+          <div class="sc-info"><div class="sc-name">Made in Heaven</div><div class="sc-sub">Drama · 2 Seasons</div></div>
+        </div>
+        <div class="sc sc-p" onclick="openDetail('Four More Shots Please','Romance · Comedy · Hindi','Chaar dost aur unki zindagi ki kahani.',['🥂'],'bg-teal','7.9',[{name:'Prime Video',sub:'Free with Prime',url:'https://www.primevideo.com/search?phrase=four+more+shots+please',cls:'wb-prime',ico:'📦'}])">
+          <div class="sc-t"><div class="sc-bg bg-teal">🥂</div><div class="sc-ov"></div></div>
+          <div class="sc-badge sc-prime">Prime</div><div class="sc-rat">⭐ 7.9</div>
+          <div class="sc-info"><div class="sc-name">Four More Shots</div><div class="sc-sub">Romance · Comedy</div></div>
+        </div>
+        <div class="sc sc-p" onclick="openDetail('Kundali Bhagya','Romance · Hindi · Ongoing','Ek anjaan ladki ki kismat ka sundar khel.',['⭐'],'bg-rose','7.8',[{name:'ZEE5',sub:'Free episodes available',url:'https://www.zee5.com/shows/details/kundali-bhagya',cls:'wb-hotstar',ico:'🎬'},{name:'JioHotstar',sub:'Dekho free mein',url:'https://www.hotstar.com',cls:'wb-hotstar',ico:'⭐'}])">
+          <div class="sc-t"><div class="sc-bg bg-rose">⭐</div><div class="sc-ov"></div></div>
+          <div class="sc-badge sc-hot">ZEE5</div><div class="sc-rat">⭐ 7.8</div>
+          <div class="sc-info"><div class="sc-name">Kundali Bhagya</div><div class="sc-sub">Romance · Ongoing</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec" style="padding-bottom:8px;">
+      <div class="sec-head"><div class="sec-title">🔪 Thriller & Crime</div><div class="sec-all">Sab dekho</div></div>
+      <div class="hscroll">
+        <div class="sc sc-p" onclick="openDetail('Sacred Games','Thriller · Crime · Hindi · 2 Seasons','Mumbai ki underworld aur police ki khatarnak kahani.',['🎭'],'bg-dark','8.8',[{name:'Netflix',sub:'Subscription chahiye',url:'https://www.netflix.com/in/title/80115328',cls:'wb-hotstar',ico:'🎬'}])">
+          <div class="sc-t"><div class="sc-bg bg-dark">🎭</div><div class="sc-ov"></div></div>
+          <div class="sc-badge sc-jio">Netflix</div><div class="sc-rat">⭐ 8.8</div>
+          <div class="sc-info"><div class="sc-name">Sacred Games</div><div class="sc-sub">Thriller · S1 S2</div></div>
+        </div>
+        <div class="sc sc-p" onclick="openDetail('Paatal Lok','Thriller · Crime · Hindi','Ek inspector ki andheri duniya mein yatra.',['🌑'],'bg-dark','8.0',[{name:'Prime Video',sub:'Free with Prime',url:'https://www.primevideo.com/search?phrase=paatal+lok',cls:'wb-prime',ico:'📦'}])">
+          <div class="sc-t"><div class="sc-bg bg-drama">🌑</div><div class="sc-ov"></div></div>
+          <div class="sc-badge sc-prime">Prime</div><div class="sc-rat">⭐ 8.0</div>
+          <div class="sc-info"><div class="sc-name">Paatal Lok</div><div class="sc-sub">Thriller · Crime</div></div>
+        </div>
+        <div class="sc sc-p" onclick="openDetail('Delhi Crime','Crime · Drama · Hindi · 2 Seasons','Delhi ki ek sachchi ghatna par aadharit award winning show.',['🚔'],'bg-dark','8.5',[{name:'Netflix',sub:'Subscription chahiye',url:'https://www.netflix.com/in/title/81076012',cls:'wb-hotstar',ico:'🎬'}])">
+          <div class="sc-t"><div class="sc-bg bg-dark">🚔</div><div class="sc-ov"></div></div>
+          <div class="sc-badge sc-jio">Netflix</div><div class="sc-rat">⭐ 8.5</div>
+          <div class="sc-info"><div class="sc-name">Delhi Crime</div><div class="sc-sub">Crime · S1 S2</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEARCH PAGE -->
+  <div class="page" id="page-search">
+    <div class="search-wrap">
+      <div class="search-box">
+        <span style="font-size:0.88rem;color:var(--muted);">🔍</span>
+        <input class="si-input" type="text" placeholder="Show ya movie dhundo..." id="searchInput" oninput="doSearch(this.value)"/>
+      </div>
+    </div>
+    <div id="searchResults" style="margin-top:8px;">
+      <div style="padding:20px 16px;text-align:center;color:var(--muted);font-size:0.8rem;">Kuch likhna shuru karo... 🔍</div>
+    </div>
+  </div>
+
+  <!-- MY LIST PAGE -->
+  <div class="page" id="page-mylist">
+    <div style="padding:16px 16px 8px;"><div style="font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;">❤️ Meri List</div></div>
+    <div class="mylist-empty" id="mlEmpty"><span style="font-size:2.8rem;display:block;margin-bottom:12px;">📺</span><div style="font-size:0.82rem;">Abhi list khaali hai!<br><span style="font-size:0.7rem;">Kisi bhi show pe ❤️ dabao</span></div></div>
+    <div class="mylist-grid" id="mlGrid"></div>
+  </div>
+
+  <!-- PROFILE PAGE -->
+  <div class="page" id="page-profile">
+    <div style="padding:20px 16px 0;">
+      <div style="background:linear-gradient(135deg,#160810,#1e1020);border-radius:16px;padding:20px;margin-bottom:14px;text-align:center;">
+        <div style="font-size:3rem;margin-bottom:10px;">👤</div>
+        <div style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;">Show TV User</div>
+        <div style="font-size:0.7rem;color:var(--muted);margin-top:4px;">Free Member</div>
+        <button onclick="showToast('👑 Premium coming soon!')" style="margin-top:14px;background:var(--grad-gold);border:none;border-radius:10px;padding:10px 24px;color:#000;font-family:'DM Sans',sans-serif;font-size:0.8rem;font-weight:700;cursor:pointer;">👑 Premium Lo</button>
+      </div>
+      <div style="background:linear-gradient(135deg,#001a0d,#002d1a);border:1px solid rgba(74,222,128,0.2);border-radius:14px;padding:16px;margin-bottom:20px;">
+        <div style="font-size:0.58rem;color:var(--green);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:8px;">📺 Show TV Kaise Kaam Karta Hai</div>
+        <div style="font-size:0.72rem;line-height:1.85;color:var(--muted);">
+          Show TV ek <strong style="color:var(--text);">Entertainment Guide</strong> hai.<br>
+          Yahan shows ki details milti hain aur<br>
+          direct link milti hai JioCinema,<br>
+          Prime Video, Hotstar pe jaane ki!<br><br>
+          <strong style="color:var(--green);">100% Free · Legal · Working ✅</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<nav class="bottom-nav">
+  <button class="nb active" onclick="showPage('home',this)"><span class="nb-ico">🏠</span><span class="nb-lbl">Home</span></button>
+  <button class="nb" onclick="showPage('search',this)"><span class="nb-ico">🔍</span><span class="nb-lbl">Search</span></button>
+  <button class="nb" onclick="showPage('mylist',this)"><span class="nb-ico">❤️</span><span class="nb-lbl">My List</span></button>
+  <button class="nb" onclick="showPage('profile',this)"><span class="nb-ico">👤</span><span class="nb-lbl">Profile</span></button>
+</nav>
+
+<!-- DETAIL MODAL -->
+<div class="detail-modal" id="detailModal">
+  <div class="dm-hdr">
+    <button class="dm-back" onclick="closeDetail()">←</button>
+    <div class="dm-title" id="dmTitle"></div>
+  </div>
+  <div class="dm-thumb" id="dmThumb">
+    <div id="dmBg" style="position:absolute;inset:0;"></div>
+    <div class="dm-ov"></div>
+    <div id="dmEmoji" style="position:relative;z-index:1;font-size:5rem;"></div>
+  </div>
+  <div class="dm-info">
+    <div class="dm-show-title" id="dmShowTitle"></div>
+    <div class="dm-badges" id="dmBadges"></div>
+    <div class="dm-desc" id="dmDesc"></div>
+    <div class="dm-actions">
+      <div class="dm-act" onclick="addCurrentToList()"><div class="dm-act-ico">❤️</div><div class="dm-act-lbl">My List</div></div>
+      <div class="dm-act" onclick="shareShow()"><div class="dm-act-ico">📤</div><div class="dm-act-lbl">Share</div></div>
+      <div class="dm-act" onclick="showToast('⭐ Rating diya!')"><div class="dm-act-ico">⭐</div><div class="dm-act-lbl">Rate</div></div>
+    </div>
+  </div>
+  <div class="watch-sec">
+    <div class="watch-title">▶ Yahan Dekho — Abhi!</div>
+    <div class="watch-btns" id="watchBtns"></div>
+  </div>
+  <a class="aff" href="https://www.amazon.in/s?k=headphones" target="_blank">
+    <div class="aff-ico">🎧</div>
+    <div class="aff-info"><div class="aff-lbl">Amazon Affiliate</div><div class="aff-name">Boat Headphones — ₹799 mein</div></div>
+    <button class="aff-btn">Buy</button>
+  </a>
+  <div style="height:20px;"></div>
+</div>
+
+<script>
+setTimeout(()=>{const s=document.getElementById('splash');s.style.opacity='0';setTimeout(()=>s.style.display='none',800);},2500);
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600);}
+function showPage(name,btn){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));document.getElementById('page-'+name).classList.add('active');btn.classList.add('active');document.querySelector('main').scrollTo(0,0);}
+let curSlide=0;
+const slides=document.querySelectorAll('.hero-slide');
+const dots=document.querySelectorAll('.hdot');
+function goSlide(n){slides[curSlide].classList.remove('active');dots[curSlide].classList.remove('active');curSlide=n;slides[curSlide].classList.add('active');dots[curSlide].classList.add('active');}
+setInterval(()=>goSlide((curSlide+1)%slides.length),4500);
+function setTab(btn){document.querySelectorAll('.gtab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');showToast('🎬 '+btn.textContent.trim()+' filter laga!');}
+let myList=[];let currShow={};
+function addToList(name,bg,emoji){if(myList.find(s=>s.name===name)){showToast('✅ Pehle se list mein hai!');return;}myList.push({name,bg,emoji});updateMyList();showToast('❤️ "'+name+'" list mein add kiya!');}
+function updateMyList(){const grid=document.getElementById('mlGrid');const empty=document.getElementById('mlEmpty');if(!myList.length){empty.style.display='block';grid.innerHTML='';return;}empty.style.display='none';grid.innerHTML=myList.map(s=>`<div class="sc sc-p" style="width:100%;"><div class="sc-t" style="height:160px;"><div class="sc-bg ${s.bg}">${s.emoji}</div><div class="sc-ov"></div></div><div class="sc-info"><div class="sc-name">${s.name}</div></div></div>`).join('');}
+function openDetail(title,meta,desc,emojiArr,bgClass,rating,watchLinks){
+  currShow={title,meta,desc,emoji:emojiArr[0],bgClass,watchLinks};
+  document.getElementById('dmTitle').textContent=title;
+  document.getElementById('dmShowTitle').textContent=title;
+  document.getElementById('dmBg').className=bgClass;
+  document.getElementById('dmBg').style.cssText='position:absolute;inset:0;';
+  document.getElementById('dmEmoji').textContent=emojiArr[0];
+  document.getElementById('dmBadges').innerHTML=meta.split(' · ').map(m=>`<span class="dm-badge">${m}</span>`).join('')+`<span class="dm-badge">⭐ ${rating}</span>`;
+  document.getElementById('dmDesc').textContent=desc;
+  document.getElementById('watchBtns').innerHTML=watchLinks.map(w=>`<a class="watch-btn ${w.cls}" href="${w.url}" target="_blank"><div class="wb-icon">${w.ico}</div><div class="wb-text"><div class="wb-name">${w.name}</div><div class="wb-sub">${w.sub}</div></div><div class="wb-arrow">›</div></a>`).join('');
+  document.getElementById('detailModal').classList.add('show');
+}
+function closeDetail(){document.getElementById('detailModal').classList.remove('show');}
+function addCurrentToList(){addToList(currShow.title,currShow.bgClass,currShow.emoji);}
+function shareShow(){if(navigator.share){navigator.share({title:currShow.title,text:'Show TV pe dekho: '+currShow.title,url:'https://showtv-india.netlify.app'});}else{showToast('🔗 Link copy kiya!');}}
+const allShows=[
+  {name:'Mirzapur',meta:'Crime · Drama · 3 Seasons',emoji:'👊',bg:'bg-drama',platform:'Prime Video',cls:'sc-prime'},
+  {name:'Panchayat',meta:'Comedy · Drama · 3 Seasons',emoji:'😄',bg:'bg-gold',platform:'Prime Video',cls:'sc-prime'},
+  {name:'Scam 1992',meta:'Drama · True Story',emoji:'📈',bg:'bg-drama',platform:'SonyLIV',cls:'sc-mx'},
+  {name:'Anupamaa',meta:'Family · Drama · Ongoing',emoji:'🌸',bg:'bg-rose',platform:'JioHotstar Free',cls:'sc-free'},
+  {name:'Sacred Games',meta:'Thriller · Crime · S1 S2',emoji:'🎭',bg:'bg-dark',platform:'Netflix',cls:'sc-jio'},
+  {name:'Broken But Beautiful',meta:'Romance · 3 Seasons',emoji:'💔',bg:'bg-purple',platform:'MX Player FREE',cls:'sc-free'},
+  {name:'Made in Heaven',meta:'Drama · Romance · 2 Seasons',emoji:'💍',bg:'bg-gold',platform:'Prime Video',cls:'sc-prime'},
+  {name:'Delhi Crime',meta:'Crime · Drama · S1 S2',emoji:'🚔',bg:'bg-dark',platform:'Netflix',cls:'sc-jio'},
+  {name:'Paatal Lok',meta:'Thriller · Crime',emoji:'🌑',bg:'bg-drama',platform:'Prime Video',cls:'sc-prime'},
+  {name:'Aspirants',meta:'Drama · Youth',emoji:'📚',bg:'bg-purple',platform:'YouTube FREE',cls:'sc-free'},
+  {name:'Kota Factory',meta:'Drama · Youth · 3 Seasons',emoji:'🏫',bg:'bg-drama',platform:'Netflix / YouTube',cls:'sc-jio'},
+  {name:'Taarak Mehta Ka Ooltah Chashmah',meta:'Comedy · Family · Ongoing',emoji:'😂',bg:'bg-gold',platform:'JioCinema FREE',cls:'sc-free'},
+  {name:'Yeh Rishta Kya Kehlata Hai',meta:'Romance · Family · Ongoing',emoji:'💕',bg:'bg-rose',platform:'JioHotstar',cls:'sc-hot'},
+  {name:'Kundali Bhagya',meta:'Romance · Ongoing',emoji:'⭐',bg:'bg-gold',platform:'ZEE5',cls:'sc-hot'},
+  {name:'Four More Shots Please',meta:'Romance · Comedy',emoji:'🥂',bg:'bg-teal',platform:'Prime Video',cls:'sc-prime'},
+];
+function doSearch(val){
+  const res=document.getElementById('searchResults');
+  if(!val||val.length<2){res.innerHTML='<div style="padding:20px 16px;text-align:center;color:var(--muted);font-size:0.8rem;">Kuch likhna shuru karo... 🔍</div>';return;}
+  const filtered=allShows.filter(s=>s.name.toLowerCase().includes(val.toLowerCase())||s.meta.toLowerCase().includes(val.toLowerCase()));
+  if(!filtered.length){res.innerHTML='<div style="padding:20px 16px;text-align:center;color:var(--muted);font-size:0.8rem;">Koi show nahi mila 😔</div>';return;}
+  res.innerHTML=filtered.map(s=>`<div class="sr-item" onclick="showToast('▶ ${s.name} dekho!')"><div class="sr-emoji">${s.emoji}</div><div class="sr-info"><div class="sr-name">${s.name}</div><div class="sr-meta">${s.meta}</div><span class="sr-plat ${s.cls}">${s.platform}</span></div></div>`).join('');
+}
+</script>
+</body>
+</html>
